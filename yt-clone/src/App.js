@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import Header from "./components/header/Header";
 import HomeScreen from "./screen/HomeScreen";
 import Sidebar from "./components/sideBar/Sidebar";
+import LoginScreen from "./screen/loginScreen/LoginScreen";
+import { useSelector } from "react-redux";
+
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 
 import "./_app.scss";
 
-const App = () => {
+const Layout = ({ children }) => {
   const [sidebar, toggleSidebar] = useState(false);
 
   const handleToggleSidebar = () => toggleSidebar((value) => !value);
@@ -17,10 +21,43 @@ const App = () => {
       <div className="app_container border border-info">
         <Sidebar sidebar={sidebar} handleToggleSidebar={handleToggleSidebar} />
         <Container fluid className="app_main border border-warning">
-          <HomeScreen />
+          {children}
         </Container>
       </div>
     </>
+  );
+};
+
+const App = () => {
+  const { accessToken, loading } = useSelector((state) => state.auth);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (!loading && !accessToken) {
+      history.push("/auth");
+    }
+  }, [accessToken, loading, history]);
+
+  return (
+    <Switch>
+      <Route path="/" exact>
+        <Layout>
+          <HomeScreen />
+        </Layout>
+      </Route>
+      <Route path="/auth">
+        <LoginScreen />
+      </Route>
+      <Route path="/search">
+        <Layout>
+          <p>Search me</p>
+        </Layout>
+      </Route>
+      <Route>
+        <Redirect to="/" />
+      </Route>
+    </Switch>
   );
 };
 
