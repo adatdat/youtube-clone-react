@@ -31,9 +31,9 @@ const Video = ({ video }) => {
       } = await request("/videos", {
         params: {
           part: "contentDetails,statistics",
+          id: id,
         },
       });
-      console.log(items[0].contentDetails.duration);
       setDuration(items[0].contentDetails.duration);
       setViews(items[0].statistics.viewCount);
     };
@@ -42,18 +42,18 @@ const Video = ({ video }) => {
 
   useEffect(() => {
     const getChannelIcon = async () => {
-       const {
-          data: { items },
-       } = await request('/channels', {
-          params: {
-             part: 'snippet',
-             id: channelId,
-          },
-       })
-       setChannelIcon(items[0].snippet.thumbnails.default)
-    }
-    getChannelIcon()
- }, [channelId])
+      const {
+        data: { items },
+      } = await request("/channels", {
+        params: {
+          part: "snippet",
+          id: channelId,
+        },
+      });
+      setChannelIcon(items[0].snippet.thumbnails.default);
+    };
+    getChannelIcon();
+  }, [channelId]);
 
   return (
     <div className="video">
@@ -64,15 +64,12 @@ const Video = ({ video }) => {
       <div className="video_title">{title}</div>
       <div className="video_detail">
         <span>
-          <AiFillEye /> {numeral(views).format('0.a')} Views •{' '}
-        </span>{' '}
+          <AiFillEye /> {numeral(views).format("0.a")} Views •{" "}
+        </span>{" "}
         <span>{moment(publishedAt).fromNow()}</span>
       </div>
       <div className="video_channel">
-        <img
-          src={channelIcon?.url}
-          alt=""
-        />
+        <img src={channelIcon?.url} alt="" />
         <p>{channelTitle}</p>
       </div>
     </div>

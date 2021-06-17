@@ -15,7 +15,6 @@ const HomeScreen = () => {
   }, [dispatch]);
 
   const { videos } = useSelector((state) => state.homeVideo);
-  console.log(videos);
   return (
     <Container>
       <CategoriesBar />
