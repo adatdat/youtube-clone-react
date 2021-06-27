@@ -2,16 +2,28 @@ import React, { useEffect } from "react";
 import "./_videoMetadata.scss";
 import moment from "moment";
 import numeral from "numeral";
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { MdThumbUp, MdThumbDown } from "react-icons/md";
 import ShowMoreText from "react-show-more-text";
+import { getChannelDetails, checkSubscriptionStatus } from "../../redux/actions/channel.action";
 
 const VideoMetadata = ({ video: { snippet, statistics }, videoId }) => {
+  const { channelId, channelTitle, description, title, publishedAt } = snippet;
+  const { viewCount, likeCount, dislikeCount } = statistics;
 
-  const { channelId, channelTitle, description, title, publishedAt } = snippet
-   const { viewCount, likeCount, dislikeCount } = statistics
+  const dispatch = useDispatch();
 
-   const dispatch = useDispatch()
+  const { snippet: channelSnippet, statistics: channelStatistics } =
+    useSelector((state) => state.channelDetails.channel);
+
+  const subscriptionStatus = useSelector(
+    (state) => state.channelDetails.subscriptionStatus
+  );
+
+  useEffect(() => {
+    dispatch(getChannelDetails(channelId));
+    dispatch(checkSubscriptionStatus(channelId));
+  }, [dispatch, channelId]);
 
   return (
     <div className="py-2 videoMetaData">
@@ -35,14 +47,26 @@ const VideoMetadata = ({ video: { snippet, statistics }, videoId }) => {
       </div>
       <div className="py-3 my-2 videoMetaData__channel d-flex justify-content-between align-items-center">
         <div className="d-flex">
-          <img src="https://i1.sndcdn.com/artworks-000248908839-wlug27-t500x500.jpg" alt="" className="mr-3 rounded-circle" />
+          <img
+            src={channelSnippet?.thumbnails?.default?.url}
+            alt=""
+            className="mr-3 rounded-circle"
+          />
           <div className="d-flex flex-column">
             <span>{channelTitle}</span>
-            <span> {numeral(10000).format("0.a")} Subscribers</span>
+            <span>
+              {" "}
+              {numeral(channelStatistics?.subscriberCount).format("0.a")}{" "}
+              Subscribers
+            </span>
           </div>
         </div>
 
-        <button className={`p-2 m-2 border-0 btn`}>Subscribe</button>
+        <button
+          className={`p-2 m-2 border-0 btn ${subscriptionStatus && "btn-gray"}`}
+        >
+          {subscriptionStatus ? "Subscribed" : "Subscribe"}
+        </button>
       </div>
       <div className="videoMetaData__description">
         <ShowMoreText
