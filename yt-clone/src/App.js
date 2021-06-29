@@ -10,6 +10,9 @@ import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 
 import "./_app.scss";
 import WatchScreen from "./screen/watchScreen/WatchScreen";
+import SearchScreen from "./screen/searchScreen/SearchScreen";
+import SubScriptionsScreen from "./screen/subscriptionsScreen/SubScriptionsScreen";
+import ChannelScreen from "./screen/channelScreen/ChannelScreen";
 
 const Layout = ({ children }) => {
   const [sidebar, toggleSidebar] = useState(false);
@@ -50,14 +53,24 @@ const App = () => {
       <Route path="/auth">
         <LoginScreen />
       </Route>
-      <Route path="/search">
+      <Route path="/search/:query">
         <Layout>
-          <p>Search me</p>
+          <SearchScreen />
         </Layout>
       </Route>
       <Route path="/watch/:id">
         <Layout>
-          < WatchScreen />
+          <WatchScreen />
+        </Layout>
+      </Route>
+      <Route path="/feed/subscriptions">
+        <Layout>
+          <SubScriptionsScreen />
+        </Layout>
+      </Route>
+      <Route path="/channel/:channelId">
+        <Layout>
+          <ChannelScreen />
         </Layout>
       </Route>
       <Route>
